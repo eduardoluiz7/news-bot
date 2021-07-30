@@ -40,7 +40,7 @@ export function Home(){
             <main>
                 <div className='main-content'>
                     <h2>News Bot</h2>
-                    <div className='separator'></div>
+                    <div className='separator'>Faça login</div>
                     <form onSubmit={handleLogin}>
                         <input 
                             type="password"
