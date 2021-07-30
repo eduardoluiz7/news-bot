@@ -1,6 +1,8 @@
 import { useHistory } from 'react-router-dom';
 
 import '../styles/auth.scss';
+import robotImg from '../assets/images/robot.svg';
+
 import { Button } from '../components/Button';
 import { useAuth } from '../hooks/useAuth';
 import { FormEvent, useState } from 'react';
@@ -31,12 +33,13 @@ export function Home(){
         <>
             <div id="page-auth">
             <aside>
+                <img src={robotImg} alt="robo"/>
                 <strong>Gerencie Notícias</strong>
                 <p>Adicione, remova e edite notícias do news bot</p>
             </aside>
             <main>
                 <div className='main-content'>
-                    <h1>News Bot</h1>
+                    <h2>News Bot</h2>
                     <div className='separator'></div>
                     <form onSubmit={handleLogin}>
                         <input 
