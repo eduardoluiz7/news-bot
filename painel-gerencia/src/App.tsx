@@ -10,7 +10,7 @@ function App() {
 
   const PrivateRoute: React.FC<RouteProps> = ({ component: Component, ...props }) => {
 
-    const { user} = useAuth();
+    const { user } = useAuth();
     if (!Component) return null;
     return (
 

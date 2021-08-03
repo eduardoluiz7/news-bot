@@ -113,8 +113,39 @@
             }
         }
     
-        .news-list {
+        table {
+            border-style: solid;
+            border-width: 1px;
+            border-color: #000;
             margin-top: 32px;
+
+            p{
+                font-size: 12px;
+                font-weight: normal;
+            }
+
+            a{
+                font-size: 12px;
+            }
+
+            th{
+                padding: 5px;
+                height: 40px;
+                min-width: 100px;
+                border-style: solid;
+                border-width: 1px;
+                border-color: #000;
+            }
+
+            button{
+                margin-left: 3px;
+                cursor: pointer;
+            }
+
+            img{
+                width: 18px;
+                height: 18px;
+            }
         }
     }
 

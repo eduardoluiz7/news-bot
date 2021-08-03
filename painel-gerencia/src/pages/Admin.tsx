@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { useAuth } from '../hooks/useAuth';
 import { database } from '../services/firebase';
+import deleteImg from '../assets/images/delete.svg';
+import editImg from '../assets/images/pencil.svg';
 
 import '../styles/admin.scss'
 
@@ -101,7 +103,7 @@ export function Admin(){
             </header>
             <main>
                 <div className="page-title">
-                    <h1>Painel de Gerencia</h1>
+                    <h1>Painel de Gerência</h1>
                 </div>
 
                 {!novaNoticia ? (<Button onClick={()=>setNovaNoticia(true)}>Nova notícia</Button>) : 
@@ -137,14 +139,39 @@ export function Admin(){
                         </div>
                     </form>)
                 }
-                <div className="news-list">
-                {noticias.map(noticia =>{
-                    return(
-                        <h5 key={noticia.id}>{noticia.titulo}</h5>
-                    )
-                })}
-
-                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Titulo</th>
+                            <th>Tema</th>
+                            <th>Descrição</th>
+                            <th>Link</th>
+                            <th>Image URL</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {noticias.map(noticia =>{
+                            return(
+                                <tr key={noticia.id}>
+                                    <th><p>{noticia.titulo}</p></th>
+                                    <th><p>{noticia.tema}</p></th>
+                                    <th><p>{noticia.descricao}</p></th>
+                                    <th><a href={noticia.link} target="_blank" rel="noreferrer">Acessar notícia</a></th>
+                                    <th><a href={noticia.urlImage} target="_blank" rel="noreferrer">Acessar Imagem</a></th>
+                                    <th>
+                                        <button>
+                                            <img src={editImg} alt='edit'></img>
+                                        </button>
+                                        <button>
+                                            <img src={deleteImg} alt='delete'></img>
+                                        </button>
+                                    </th>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
             </main>
         </div>
         </>
