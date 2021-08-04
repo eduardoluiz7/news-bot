@@ -9,14 +9,14 @@ import { useAuth } from './hooks/useAuth';
 function App() {
 
   const PrivateRoute: React.FC<RouteProps> = ({ component: Component, ...props }) => {
-
-    const { user } = useAuth();
+    const { isAuthenticated } = useAuth(); 
+    
     if (!Component) return null;
     return (
 
         <Route
             {...props}
-            render={ () => user
+            render={ () => isAuthenticated()
                 ? <Component {...props as RouteComponentProps} />
                 : <Redirect to='/' /> 
             }
@@ -28,7 +28,7 @@ function App() {
     <BrowserRouter>
       <AuthContextProvider>
         <Switch>
-          <Route path="/" exact component={Home} />
+          <Route path="/" exact component={Home}  />
           <PrivateRoute path="/admin" component={Admin} />
         </Switch>
       </AuthContextProvider>

@@ -2,6 +2,11 @@
     header{
         padding: 24px;
         border-bottom: 1px solid #e2e2e2;
+
+        button{
+            width: 50px;
+            cursor: pointer;
+        }
     }
 
     .content{
@@ -52,9 +57,14 @@
         }
 
         form{
+            label{
+                font-size: 10px;
+                color: #737380;
+            }
             textarea{
                 width: 100%;
                 border: 0;
+                margin-bottom: 10px;
                 padding: 16px;
                 border-radius: 8px;
                 background-color: #fefefe;
@@ -67,6 +77,16 @@
                 border: 0;
                 margin-bottom: 10px;
                 padding: 16px;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+                background-color: #fefefe;
+            }
+
+            select{
+                width: 100%;
+                color: #737380;
+                border: 0;
+                padding: 16px;
+                margin-bottom: 10px;
                 box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
                 background-color: #fefefe;
             }
@@ -122,6 +142,8 @@
             p{
                 font-size: 12px;
                 font-weight: normal;
+                overflow: hidden;
+                max-height: 100px;
             }
 
             a{
@@ -131,7 +153,7 @@
             th{
                 padding: 5px;
                 height: 40px;
-                min-width: 100px;
+                min-width: 120px;
                 border-style: solid;
                 border-width: 1px;
                 border-color: #000;

@@ -35,10 +35,16 @@ export function Admin(){
     const [link, setLink] = useState('');
     const [tema, setTema] = useState('');
     const [noticias, setNoticias] = useState<NoticiaType[]>([]);
+    const [edit, setEdit] = useState(false);
+    const [editID, setEditID] = useState('');
 
     function handleLogout(){
         signOut();
         history.push('/')
+    }
+
+    function isDisabled(){
+        return titulo === '' || link === '' || tema === '' || tema === 'Selecione um tema' 
     }
 
     useEffect(()=>{
@@ -58,7 +64,7 @@ export function Admin(){
             }
         });
 
-        setNoticias(parsedNoticias);
+        setNoticias(parsedNoticias.reverse());
         })
 
         return ()=>{
@@ -75,6 +81,23 @@ export function Admin(){
         setUrlImage('')
     }
 
+    async function handleDeleteNoticia(noticiaId: string){
+        if (window.confirm('Tem certeza que você deseja remover essa notícia?')){
+            await database.ref(`/noticias/${noticiaId}`).remove();
+        }
+    }
+
+    async function handleEditNoticia(noticia: NoticiaType){
+        setNovaNoticia(true);
+        setTitulo(noticia.titulo);
+        setDescricao(noticia.descricao);
+        setTema(noticia.tema);
+        setLink(noticia.link);
+        setUrlImage(noticia.urlImage);
+        setEdit(true);
+        setEditID(noticia.id);
+    }
+
     async function handleSendNew(event: FormEvent){
         event.preventDefault();
         var noticia = {
@@ -85,11 +108,25 @@ export function Admin(){
             tema
         }
 
-        const noticiaRef = database.ref('noticias');
-        const firebaseNoticia = await noticiaRef.push(noticia);
-        
-        console.log(firebaseNoticia.key);
-        clearForm();
+        if(edit){
+            database.ref('noticias/' + editID).set(noticia, (error)=>{
+                if(error){
+                    alert('Erro ao atualizar notícia');
+                }else{
+                    alert('Notícia atualizada!')
+                }
+            });
+            clearForm();
+            setNovaNoticia(false);
+            setEdit(false);
+            setEditID('');
+        }else{
+            const noticiaRef = database.ref('noticias');
+            await noticiaRef.push(noticia);
+            clearForm();
+            setNovaNoticia(false);
+            alert('Notícia adicionada!');
+            }
     }
 
     return (
@@ -98,7 +135,7 @@ export function Admin(){
             <header>
                 <div className="content">
                     <h3>News Bot</h3>
-                    <button onClick={handleLogout}>Sair</button>
+                    <button title="Sair" onClick={handleLogout}>Sair</button>
                 </div>
             </header>
             <main>
@@ -106,36 +143,51 @@ export function Admin(){
                     <h1>Painel de Gerência</h1>
                 </div>
 
-                {!novaNoticia ? (<Button onClick={()=>setNovaNoticia(true)}>Nova notícia</Button>) : 
+                {!novaNoticia ? (<Button title="Nova notícia" onClick={()=>setNovaNoticia(true)}>Nova notícia</Button>) : 
                     (<form onSubmit={handleSendNew}>
-                        <input 
-                            placeholder="Titulo da notícia"
-                            onChange={event => setTitulo(event.target.value)}
-                            value={titulo} />
-                        <input 
-                            placeholder="Link da notícia"
-                            onChange={event => setLink(event.target.value)}
-                            value={link}
-                                 />
-                        <input 
-                            placeholder="URL da Imagem"
-                            onChange={event => setUrlImage(event.target.value)}
-                            value={urlImage}
-                            />
-                        <input 
-                            placeholder="Tema"
-                            onChange={event => setTema(event.target.value)}
-                            value={tema}
-                            />
-                        <textarea 
-                            placeholder="Descrição"
-                            onChange={event => setDescricao(event.target.value)}
-                            value={descricao}
-                            ></textarea>
+                        <label>{titulo === '' ? '' : 'Título' }
+                            <input 
+                                placeholder="Titulo da notícia"
+                                onChange={event => setTitulo(event.target.value)}
+                                value={titulo} />
+                        </label>
+
+                        <label>{tema === '' || tema === 'Selecione um tema' ? '' : 'Tema' }
+                            <select value={tema} onChange={event => setTema(event.target.value)}>
+                                <option>Selecione um tema</option>
+                                <option>Esportes</option>
+                                <option>Entretenimento</option>
+                                <option>Política</option>
+                                <option>Famosos</option>
+                            </select>
+                        </label>
+                        <label>{descricao === '' ? '' : 'Descrição' }
+                            <textarea 
+                                placeholder="Descrição"
+                                onChange={event => setDescricao(event.target.value)}
+                                value={descricao}
+                                ></textarea>
+                        </label>
+
+                        <label>{link === '' ? '' : 'Link da notícia' }
+                            <input 
+                                placeholder="Link da notícia"
+                                onChange={event => setLink(event.target.value)}
+                                value={link}
+                                    />
+                        </label>
+                        <label> {urlImage === '' ? '' : 'Link da Imagem' }
+                            <input 
+                                placeholder="Link da Imagem"
+                                onChange={event => setUrlImage(event.target.value)}
+                                value={urlImage}
+                                />
+                        </label>
+                        
 
                         <div className="form-footer">
-                            <Button type="submit">Pronto</Button>
-                            <Button type="button" isOutlined={true} onClick={()=>setNovaNoticia(false)} >Fechar</Button>
+                            <Button type="submit" title="Pronto" disabled={isDisabled()}>Pronto</Button>
+                            <Button type="button" title="Fechar" isOutlined={true} onClick={()=>setNovaNoticia(false)} >Fechar</Button>
                         </div>
                     </form>)
                 }
@@ -146,7 +198,7 @@ export function Admin(){
                             <th>Tema</th>
                             <th>Descrição</th>
                             <th>Link</th>
-                            <th>Image URL</th>
+                            <th>Link da IMG</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -157,13 +209,13 @@ export function Admin(){
                                     <th><p>{noticia.titulo}</p></th>
                                     <th><p>{noticia.tema}</p></th>
                                     <th><p>{noticia.descricao}</p></th>
-                                    <th><a href={noticia.link} target="_blank" rel="noreferrer">Acessar notícia</a></th>
-                                    <th><a href={noticia.urlImage} target="_blank" rel="noreferrer">Acessar Imagem</a></th>
+                                    <th><a href={noticia.link} target="_blank" rel="noreferrer">Link da notícia</a></th>
+                                    <th><a href={noticia.urlImage} target="_blank" rel="noreferrer">Link da Imagem</a></th>
                                     <th>
-                                        <button>
+                                        <button title="Editar" onClick={()=> handleEditNoticia(noticia)}>
                                             <img src={editImg} alt='edit'></img>
                                         </button>
-                                        <button>
+                                        <button title="Excluir" onClick={()=> handleDeleteNoticia(noticia.id)}>
                                             <img src={deleteImg} alt='delete'></img>
                                         </button>
                                     </th>
